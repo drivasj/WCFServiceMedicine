@@ -63,9 +63,60 @@ namespace WCFServiceMedicine
             return oMedicamentoCLS;
         }
 
+        /// <summary>
+        /// Registrar o Actualizar Medicamento
+        /// </summary>
+        /// <param name="oMedicineCLS"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         int IService1.GetMedicine(MedicineCLS oMedicineCLS)
         {
-            throw new NotImplementedException();
+            int rpta = 0;
+
+            try
+            {
+                using (var db=new MedicineEntities())
+                {
+                    // Save
+                    if(oMedicineCLS.iidformafarmaceutica == 0)
+                    {
+                        Medicamento omedicamento = new Medicamento();
+
+                        omedicamento.IIDMEDICAMENTO = oMedicineCLS.iidmedicamento;
+                        omedicamento.NOMBRE = oMedicineCLS.nombre;
+                        omedicamento.PRECIO = oMedicineCLS.precio;
+                        omedicamento.STOCK = oMedicineCLS.stock;
+                        omedicamento.IIDFORMAFARMACEUTICA = oMedicineCLS.iidformafarmaceutica;
+                        omedicamento.CONCENTRACION = oMedicineCLS.concentracion;
+                        omedicamento.PRESENTACION = oMedicineCLS.presentacion;
+                        omedicamento.BHABILITADO = 1;
+
+                        db.Medicamento.Add(omedicamento);
+                        db.SaveChanges();
+
+                        rpta = 1;
+                    }
+                    else
+                    {
+                        // Update
+                        Medicamento omedicamento = db.Medicamento.Where(p => p.IIDMEDICAMENTO == oMedicineCLS.iidmedicamento).First();
+                        omedicamento.NOMBRE = oMedicineCLS.nombre;
+                        omedicamento.PRECIO = oMedicineCLS.precio;
+                        omedicamento.STOCK = oMedicineCLS.stock;
+                        omedicamento.IIDFORMAFARMACEUTICA = oMedicineCLS.iidformafarmaceutica;
+                        omedicamento.CONCENTRACION = oMedicineCLS.concentracion;
+                        omedicamento.PRESENTACION = oMedicineCLS.presentacion;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                rpta = 0;
+            }
+
+            return rpta;
+
         }
 
         List<FormaFarmaceuticaCLS> IService1.listFormaFarmaceitica()
